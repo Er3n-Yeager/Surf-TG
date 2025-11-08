@@ -1,7 +1,7 @@
 # ----------------------------------------------------------------------
 # Stage 1: Build Stage (Only includes tools necessary for installation)
 # ----------------------------------------------------------------------
-FROM python:3.9-alpine AS builder
+FROM python:3.10-alpine AS builder
 
 # Install build dependencies (for compiling C extensions like tgcrypto) and 'bash'.
 # NOTE: We DO NOT install 'git' here.
@@ -29,7 +29,7 @@ COPY . /app
 # ----------------------------------------------------------------------
 # Stage 2: Final Stage (Minimal Runtime Image)
 # ----------------------------------------------------------------------
-FROM python:3.9-alpine
+FROM python:3.10-alpine
 
 # Set the working directory
 WORKDIR /app
@@ -40,7 +40,7 @@ WORKDIR /app
 RUN apk add --no-cache bash git
 
 # Copy the installed Python dependencies from the 'builder' stage
-COPY --from=builder /usr/local/lib/python3.9/site-packages /usr/local/lib/python3.9/site-packages
+COPY --from=builder /usr/local/lib/python3.10/site-packages /usr/local/lib/python3.10/site-packages
 
 # Copy the application source code
 COPY --from=builder /app /app
