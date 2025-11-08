@@ -1,7 +1,7 @@
 # ----------------------------------------------------------------------
 # Stage 1: Build Stage (Only includes tools necessary for installation)
 # ----------------------------------------------------------------------
-FROM python:3.12-alpine AS builder
+FROM python:3.9-alpine AS builder
 
 # Install build dependencies (for compiling C extensions like tgcrypto) and 'bash'.
 # NOTE: We DO NOT install 'git' here.
@@ -29,7 +29,7 @@ COPY . /app
 # ----------------------------------------------------------------------
 # Stage 2: Final Stage (Minimal Runtime Image)
 # ----------------------------------------------------------------------
-FROM python:3.12-alpine
+FROM python:3.9-alpine
 
 # Set the working directory
 WORKDIR /app
