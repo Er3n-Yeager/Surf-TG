@@ -1,9 +1,27 @@
-from asyncio import get_event_loop, sleep as asleep, gather
+import asyncio
+import sys
 from traceback import format_exc
 
+# 🔧 --- Event loop initialization patch (must be first) ---
+try:
+    import uvloop
+    try:
+        asyncio.get_running_loop()
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+    uvloop.install()
+    print("✅ uvloop successfully installed and event loop set.")
+except Exception as e:
+    print(f"⚠️ uvloop not used: {e}")
+    if not asyncio.get_event_loop_policy().get_event_loop():
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+# ---------------------------------------------------------
+
+from asyncio import get_event_loop, sleep as asleep
 from aiohttp import web
 from pyrogram import idle
-
 from bot import __version__, LOGGER
 from bot.config import Telegram
 from bot.server import web_server
@@ -19,6 +37,7 @@ async def start_services():
     await StreamBot.start()
     StreamBot.username = StreamBot.me.username
     LOGGER.info(f"Bot Client : [@{StreamBot.username}]")
+
     if len(Telegram.SESSION_STRING) != 0:
         await UserBot.start()
         UserBot.username = UserBot.me.username or UserBot.me.first_name or UserBot.me.id
@@ -29,25 +48,24 @@ async def start_services():
     await initialize_clients()
     
     await asleep(2)
-    LOGGER.info('Initalizing Surf Web Server..')
+    LOGGER.info('Initializing Surf Web Server...')
     server = web.AppRunner(await web_server())
     LOGGER.info("Server CleanUp!")
     await server.cleanup()
     
     await asleep(2)
-    LOGGER.info("Server Setup Started !")
+    LOGGER.info("Server Setup Started!")
     
     await server.setup()
     await web.TCPSite(server, '0.0.0.0', Telegram.PORT).start()
 
-    LOGGER.info("Surf-TG Started Revolving !")
+    LOGGER.info("Surf-TG Started Revolving!")
     await idle()
 
 async def stop_clients():
     await StreamBot.stop()
     if len(Telegram.SESSION_STRING) != 0:
         await UserBot.stop()
-
 
 if __name__ == '__main__':
     try:
