@@ -40,7 +40,7 @@ WORKDIR /app
 RUN apk add --no-cache bash git
 
 # Copy the installed Python dependencies from the 'builder' stage
-COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
+COPY --from=builder /usr/local/lib/python3.9/site-packages /usr/local/lib/python3.9/site-packages
 
 # Copy the application source code
 COPY --from=builder /app /app
