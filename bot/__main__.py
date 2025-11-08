@@ -1,27 +1,9 @@
-import asyncio
-import sys
+from asyncio import get_event_loop, sleep as asleep
 from traceback import format_exc
 
-# 🔧 --- Event loop initialization patch (must be first) ---
-try:
-    import uvloop
-    try:
-        asyncio.get_running_loop()
-    except RuntimeError:
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-    uvloop.install()
-    print("✅ uvloop successfully installed and event loop set.")
-except Exception as e:
-    print(f"⚠️ uvloop not used: {e}")
-    if not asyncio.get_event_loop_policy().get_event_loop():
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-# ---------------------------------------------------------
-
-from asyncio import get_event_loop, sleep as asleep
 from aiohttp import web
 from pyrogram import idle
+
 from bot import __version__, LOGGER
 from bot.config import Telegram
 from bot.server import web_server
